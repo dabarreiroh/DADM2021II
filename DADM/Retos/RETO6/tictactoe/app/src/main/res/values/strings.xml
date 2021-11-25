@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Tictactoe</string>
+    <string name="first_human">You go first.</string>
+    <string name="turn_human">Your turn.</string>
+    <string name="turn_computer">Android turn.</string>
+    <string name="result_tie">Its a tie.</string>
+    <string name="result_human_wins">You won!</string>
+    <string name="result_android_wins">Android won!</string>
+    <string name="about_message">TicTacToe 8 bit</string>
+    <string name="difficulty_choose">Choose difficulty</string>
+    <string name="difficulty_easy">Easy</string>
+    <string name="difficulty_harder">Medium</string>
+    <string name="difficulty_expert">Hard</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="ok">Ok</string>
+    <string name="quit_question">Are you sure you want to quit?</string>
+
+
+</resources>

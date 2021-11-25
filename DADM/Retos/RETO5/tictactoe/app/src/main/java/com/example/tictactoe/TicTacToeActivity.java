@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
-//import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,11 +24,13 @@ import java.util.Random;
 public class TicTacToeActivity extends AppCompatActivity {
 
     private TicTacToeGame mGame;
+    private Button [] mBoardButtons;
     private boolean mGameOver;
     private int human_wins;
     private int android_wins;
-    private int ties;
-    private TextView mInfoTextView;
+    public int ties;
+    private TextView mInfoTextView,mScoreTextView;
+
     static final int DIALOG_DIFFICULTY_ID = 0;
     static final int DIALOG_QUIT_ID = 2;
     static final int DIALOG_ABOUT_ID = 1;
@@ -49,7 +50,16 @@ public class TicTacToeActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_tic_tac_toe);
 
-
+        mBoardButtons = new Button[TicTacToeGame.BOARD_SIZE];
+        mBoardButtons[0] = (Button) findViewById(R.id.b1);
+        mBoardButtons[1] = (Button) findViewById(R.id.b2);
+        mBoardButtons[2] = (Button) findViewById(R.id.b3);
+        mBoardButtons[3] = (Button) findViewById(R.id.b4);
+        mBoardButtons[4] = (Button) findViewById(R.id.b5);
+        mBoardButtons[5] = (Button) findViewById(R.id.b6);
+        mBoardButtons[6] = (Button) findViewById(R.id.b7);
+        mBoardButtons[7] = (Button) findViewById(R.id.b8);
+        mBoardButtons[8] = (Button) findViewById(R.id.b9);
 
         mGame = new TicTacToeGame();
         mGameOver = false;
@@ -57,7 +67,8 @@ public class TicTacToeActivity extends AppCompatActivity {
         human_wins = 0;
         android_wins = 0;
         ties = 0;
-        mBoardView = (BoardView) findViewById(R.id.board);//findViewById(R.id.board);
+
+        mBoardView = (BoardView) findViewById(R.id.board);
         mBoardView.setGame(mGame);
         mBoardView.setOnTouchListener(mTouchListener);
 
@@ -141,10 +152,13 @@ public class TicTacToeActivity extends AppCompatActivity {
         mBoardView.invalidate();
         mGameOver = false;
         mInfoTextView=(TextView) findViewById(R.id.info_text);
+        mScoreTextView=(TextView) findViewById(R.id.score_text);
+        mScoreTextView.setText(String.format("Score Human:%dTie:%dAndroid:%d", human_wins, ties, android_wins));
         Random rand = new Random();
         int n = rand.nextInt(100);
         if(n < 50){
             mInfoTextView.setText(R.string.turn_computer);
+
             int move = mGame.getComputerMove();
             setMove(TicTacToeGame.COMPUTER_PLAYER, move);
 
@@ -155,6 +169,7 @@ public class TicTacToeActivity extends AppCompatActivity {
 
     private class ButtonClickListener implements View.OnClickListener {
         int location;
+
         public ButtonClickListener(int location){
             this.location = location;
         }
@@ -173,7 +188,8 @@ public class TicTacToeActivity extends AppCompatActivity {
                     mInfoTextView.setText(R.string.turn_human);
                 } else if(winner == 1) {
                     mGameOver = true;
-                    ties+=1;
+                    ties=ties+1;
+
                 } else if (winner == 2){
                     mGameOver = true;
                     human_wins+=1;
@@ -202,6 +218,7 @@ public class TicTacToeActivity extends AppCompatActivity {
     private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
+
             if(turn == TicTacToeGame.HUMAN_PLAYER) {
                 int col = (int) event.getX() / mBoardView.getBoardCelWidth();
                 int row = (int) event.getY() / mBoardView.getBoardCelHeight();
@@ -219,16 +236,23 @@ public class TicTacToeActivity extends AppCompatActivity {
                                 setMove(TicTacToeGame.COMPUTER_PLAYER, move);
                                 int winner = mGame.checkForWinner();
                                 if (winner == 0) {
+                                    mInfoTextView.setText(R.string.turn_human);
                                     turn = TicTacToeGame.HUMAN_PLAYER;
                                 } else if (winner == 1) {
-                                    mGameOver = true;
                                     ties += 1;
+                                    mScoreTextView.setText(String.format("Score Human:%dTie:%dAndroid:%d", human_wins, ties, android_wins));
+                                    mGameOver = true;
+
                                 } else if (winner == 2) {
-                                    mGameOver = true;
                                     human_wins += 1;
-                                } else {
+                                    mScoreTextView.setText(String.format("Score Human:%dTie:%dAndroid:%d", human_wins, ties, android_wins));
                                     mGameOver = true;
+
+                                } else {
                                     android_wins += 1;
+                                    mScoreTextView.setText(String.format("Score Human:%dTie:%dAndroid:%d", human_wins, ties, android_wins));
+                                    mGameOver = true;
+
                                 }
                             }
                         }, 1000);
