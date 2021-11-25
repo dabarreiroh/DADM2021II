@@ -2,10 +2,10 @@
     <item android:id="@+id/new_game"
         android:title="New Game"
         android:icon="@drawable/o_img"/>
-    <item android:id="@+id/ai_difficulty"
-        android:title="Difficulty"
+    <item android:id="@+id/settings"
+        android:title="Difficult"
         android:icon="@drawable/o_img"/>
-    <item android:id="@+id/quit"
+    <item android:id="@+id/reset"
         android:title="Quit"
         android:icon="@drawable/o_img"/>
 

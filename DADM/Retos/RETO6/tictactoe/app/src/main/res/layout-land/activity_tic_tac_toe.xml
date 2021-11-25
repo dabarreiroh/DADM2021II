@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal">
+
+    <TableLayout
+        android:id="@+id/play_grid"
+        android:layout_width="299dp"
+        android:layout_height="319dp"
+        android:layout_marginTop="5dp"
+        android:stretchColumns="1"
+        android:translationX="-160dp">
+
+        <com.example.tictactoe.BoardView
+            android:id="@+id/board"
+            android:layout_width="279dp"
+            android:layout_height="293dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:translationX="5dp" />
+
+    </TableLayout>
+
+    <TextView
+        android:id="@+id/info_text"
+        android:layout_width="285dp"
+        android:layout_height="47dp"
+        android:layout_weight="1"
+        android:gravity="start"
+        android:paddingStart="10dp"
+        android:paddingLeft="10dp"
+        android:text=""
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="25sp"
+        android:translationX="200dp"
+        android:translationY="10dp" />
+
+    <TextView
+        android:id="@+id/score_text"
+        android:layout_width="278dp"
+        android:layout_height="212dp"
+        android:gravity="start"
+        android:paddingStart="10dp"
+        android:text="Score"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="25sp"
+        android:translationX="200dp"
+        android:translationY="100dp" />
+
+
+</RelativeLayout>

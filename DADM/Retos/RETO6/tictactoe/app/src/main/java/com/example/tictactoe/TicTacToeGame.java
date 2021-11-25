@@ -3,11 +3,13 @@ package com.example.tictactoe;
 
 import android.util.Log;
 
+import java.util.InputMismatchException;
 import java.util.Random;
+import java.util.Scanner;
 
 public class TicTacToeGame {
 
-    private char mBoard[] = {'1','2','3','4','5','6','7','8','9'};
+    private char mBoard[] = {' ',' ',' ',' ',' ',' ',' ',' ',' '};
     public static final int BOARD_SIZE = 9;
 
     public static final char HUMAN_PLAYER = 'X';
@@ -15,21 +17,114 @@ public class TicTacToeGame {
     public static final char OPEN_SPOT = ' ';
 
     private Random mRand;
-
-    public enum DifficultyLevel {Easy, Harder, Expert};
-
     private DifficultyLevel mDifficultyLevel = DifficultyLevel.Expert;
 
-    public TicTacToeGame() {
+    public enum DifficultyLevel { Easy, Harder, Expert  };
 
+    public DifficultyLevel getDifficultyLevel(){
+        return mDifficultyLevel;
+    }
+
+    public void setDifficultyLevel( DifficultyLevel level ){
+        mDifficultyLevel = level;
+    }
+
+    public TicTacToeGame() {
         // Seed the random number generator
         mRand = new Random();
+    }
 
-        char turn = HUMAN_PLAYER;
-        int  win = 0;
+    public char getBoardOccupant( int idx ){
+        return mBoard[ idx ];
+    }
+
+    /** Clear the board of all X's and O's by setting all spots to OPEN_SPOT. */
+    public void clearBoard(){
+        for( int i = 0; i < BOARD_SIZE; ++i )
+            mBoard[ i ] = ' ';
     }
 
 
+    /** Set the given player at the given location on the game board.
+     * The location must be available, or the board will not be changed.
+     *
+     * @param player - The HUMAN_PLAYER or COMPUTER_PLAYER
+     * @param location - The location (0-8) to place the move
+     */
+    public void setMove(char player, int location){
+        mBoard[ location ] = player;
+    }
+
+
+    /** Return the best move for the computer to make. You must call setMove()
+     * to actually make the computer move to that location.
+     * @return The best move for the computer to make (0-8).
+     */
+    public int getComputerMove( )
+    {
+        int move;
+        if( mDifficultyLevel == DifficultyLevel.Easy )
+            move = getRandomMove();
+        else if( mDifficultyLevel == DifficultyLevel.Harder ){
+            move = getWinningMove();
+            if( move == -1 )
+                move = getRandomMove();
+        }
+        else{
+            move = getWinningMove();
+            if( move == -1 ) move = getBlockingMove();
+            if( move == -1 ) move = getRandomMove();
+        }
+        return move;
+    }
+
+    // Generate random move
+    private int getRandomMove() {
+        int move;
+        do {
+            move = mRand.nextInt(BOARD_SIZE);
+        } while (mBoard[move] == HUMAN_PLAYER || mBoard[move] == COMPUTER_PLAYER);
+
+        mBoard[move] = COMPUTER_PLAYER;
+        return move;
+    }
+
+    // See if there's a move O can make to block X from winning
+    private int getBlockingMove() {
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            if (mBoard[i] == OPEN_SPOT) {
+                mBoard[i] = HUMAN_PLAYER;
+                if (checkForWinner() == 2) {
+                    mBoard[i] = COMPUTER_PLAYER;
+                    return i;
+                } else
+                    mBoard[i] = OPEN_SPOT;
+            }
+        }
+        return -1;
+    }
+
+    // See if there's a move O can make to win
+    private int getWinningMove(){
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            if (mBoard[i] == OPEN_SPOT) {
+                mBoard[i] = COMPUTER_PLAYER;
+                if (checkForWinner() == 3) {
+                    return i;
+                }
+                else
+                    mBoard[i] = OPEN_SPOT;
+            }
+        }
+        return -1;
+    }
+
+
+    /**
+     * Check for a winner and return a status value indicating who has won.
+     * @return Return 0 if no winner or tie yet, 1 if it's a tie, 2 if X won,
+     * or 3 if O won.
+     */
     public int checkForWinner() {
 
         // Check horizontal wins
@@ -83,96 +178,13 @@ public class TicTacToeGame {
         return 1;
     }
 
-    private int getRandomMove(){
-        int move;
-        // Generate random move
-        do
-        {
-            move = mRand.nextInt(BOARD_SIZE);
-        } while (mBoard[move] == HUMAN_PLAYER || mBoard[move] == COMPUTER_PLAYER);
-
-        mBoard[move] = COMPUTER_PLAYER;
-
-        return move;
+    public char[] getBoardState(){
+        return mBoard.clone();
     }
 
-    private int getWinningMove(){
-        // First see if there's a move O can make to win
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            if (mBoard[i] != HUMAN_PLAYER && mBoard[i] != COMPUTER_PLAYER) {
-                char curr = mBoard[i];
-                mBoard[i] = COMPUTER_PLAYER;
-                if (checkForWinner() == 3) {
-                    return i;
-                }
-                else
-                    mBoard[i] = curr;
-            }
-        }
-        return -1;
+    public void setBoardState( char[] board ){
+        for( int i = 0; i < BOARD_SIZE; ++i )
+            mBoard[ i ] = board[ i ];
     }
 
-    private int getBlockingMove(){
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            if (mBoard[i] != HUMAN_PLAYER && mBoard[i] != COMPUTER_PLAYER) {
-                char curr = mBoard[i];
-                mBoard[i] = HUMAN_PLAYER;
-                if (checkForWinner() == 2) {
-                    mBoard[i] = COMPUTER_PLAYER;
-                    return i;
-                }
-                else
-                    mBoard[i] = curr;
-            }
-        }
-        return -1;
-    }
-
-    public int getComputerMove()
-    {
-        int move = -1;
-        if(mDifficultyLevel == DifficultyLevel.Easy){
-            move = getRandomMove();
-        } else if(mDifficultyLevel == DifficultyLevel.Harder){
-            move = getWinningMove();
-            if (move == -1){
-                move = getRandomMove();
-            }
-        } else if(mDifficultyLevel == DifficultyLevel.Expert){
-            move = getWinningMove();
-            if (move == -1){
-                move = getBlockingMove();
-            }
-            if (move == -1){
-                move = getRandomMove();
-            }
-        }
-        Log.e("TEST",String.valueOf(move));
-        return move;
-    }
-
-    public void clearBoard(){
-        for(int x = 0; x < mBoard.length; x++){
-            mBoard[x] = OPEN_SPOT;
-        }
-
-    }
-
-    public int getBoardOcupant(int pos){
-        return this.mBoard[pos];
-    }
-
-    public boolean setMove(char player, int location){
-        mBoard[location] = player;
-        return true;
-    }
-
-    public DifficultyLevel getmDifficultyLevel() {
-        return mDifficultyLevel;
-    }
-
-    public void setmDifficultyLevel(DifficultyLevel mDifficultyLevel) {
-        this.mDifficultyLevel = mDifficultyLevel;
-    }
 }
-

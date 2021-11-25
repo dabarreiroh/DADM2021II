@@ -18,81 +18,78 @@ public class BoardView extends View {
 
     private Bitmap mHumanBitmap;
     private Bitmap mComputerBitmap;
-
     private Paint mPaint;
-
     private TicTacToeGame mGame;
 
-    public BoardView(Context context) {
-        super(context);
+    public BoardView( Context context ){
+        super( context );
         initialize();
     }
-    public BoardView(Context context, AttributeSet attrs) {
-        super(context, attrs);
+
+    public BoardView( Context context, AttributeSet attrs ){
+        super( context, attrs );
         initialize();
     }
-    public BoardView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
+
+    public BoardView( Context context, AttributeSet attrs, int defStyle ){
+        super( context, attrs, defStyle );
         initialize();
     }
 
     public void initialize(){
-        mHumanBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.x_img);
-        mComputerBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.o_img);
-        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mHumanBitmap = BitmapFactory.decodeResource( getResources(), R.drawable.x_img );
+        mComputerBitmap = BitmapFactory.decodeResource( getResources(), R.drawable.o_img );
+        mPaint = new Paint( Paint.ANTI_ALIAS_FLAG );
     }
 
     @Override
-    public void onDraw(Canvas canvas){
+    protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
         int boardWidth = getWidth();
         int boardHeight = getHeight();
 
-        mPaint.setColor(Color.LTGRAY);
-        mPaint.setStrokeWidth(GRID_WIDTH);
+        mPaint.setColor( Color.LTGRAY );
+        mPaint.setStrokeWidth( GRID_WIDTH );
 
         int cellWidth = boardWidth / 3;
-        canvas.drawLine(cellWidth,0,cellWidth,boardHeight,mPaint);
-        canvas.drawLine(cellWidth*2,0,cellWidth*2,boardHeight,mPaint);
+        canvas.drawLine( cellWidth, 0, cellWidth, boardHeight, mPaint );
+        canvas.drawLine( 2*cellWidth, 0, 2*cellWidth, boardHeight, mPaint );
 
-        canvas.drawLine(0,cellWidth,boardWidth,cellWidth,mPaint);
-        canvas.drawLine(0,cellWidth*2,boardWidth,cellWidth*2,mPaint);
+        int cellHeight = boardHeight / 3;
+        canvas.drawLine( 0, cellHeight, boardWidth, cellHeight, mPaint );
+        canvas.drawLine( 0, 2*cellHeight, boardWidth, 2*cellHeight, mPaint );
 
-        for (int i = 0;i < TicTacToeGame.BOARD_SIZE; i++){
-            int col = i % 3;
-            int row = i / 3;
+        for( int i = 0; i < TicTacToeGame.BOARD_SIZE; ++i ){
+            int row = i/3;
+            int col = i%3;
 
-            int left = (cellWidth*col);
-            int top = (cellWidth*row);
-            int right = (cellWidth*(col+1));
-            int bottom = (cellWidth*(row+1));
+            int left = (col != 0) ? col*cellWidth + GRID_WIDTH : 0;
+            int right = (col != 2) ?  (col+1)*cellWidth - GRID_WIDTH : (col+1)*cellWidth;
+            int top = (row != 0) ? row*(cellHeight) + GRID_WIDTH : 0;
+            int bottom = (row != 2) ? (row+1)*(cellHeight) - GRID_WIDTH : (row+1)*(cellHeight);
 
-            if(mGame != null && mGame.getBoardOcupant(i) == TicTacToeGame.HUMAN_PLAYER){
-                canvas.drawBitmap(mHumanBitmap,
-                        null,
-                        new Rect(left,top,right,bottom),
-                        null);
-            }else if(mGame != null && mGame.getBoardOcupant(i) == TicTacToeGame.COMPUTER_PLAYER){
-                canvas.drawBitmap(mComputerBitmap,
-                        null,
-                        new Rect(left,top,right,bottom),
-                        null);
+            if( mGame != null ){
+                if( mGame.getBoardOccupant( i ) == TicTacToeGame.COMPUTER_PLAYER ){
+                    canvas.drawBitmap( mComputerBitmap, null, new Rect( left, top, right, bottom ), null );
+                }
+                else if( mGame.getBoardOccupant( i ) == TicTacToeGame.HUMAN_PLAYER ){
+                    canvas.drawBitmap( mHumanBitmap, null, new Rect( left, top, right, bottom ), null );
+                }
             }
         }
+
     }
 
-    public void setGame(TicTacToeGame game){
-        this.mGame = game;
+    public int getBoardCellWidth(){
+        return getWidth()/3;
     }
 
-    public int getBoardCelWidth(){
-        return getWidth() / 3;
+    public int getBoardCellHeight(){
+        return getHeight()/3;
     }
 
-    public int getBoardCelHeight(){
-        return  getHeight() / 3;
+    public void setGame( TicTacToeGame game ){
+        mGame = game;
     }
-
 }
-
